@@ -234,26 +234,28 @@ def fetch_all_trades(status: str | None = None, date_range: tuple | None = None)
         if start_cursor:
             kwargs["start_cursor"] = start_cursor
         response = client.databases.query(**kwargs)
-        for page in response["results"]:
+        # 兼容 dict 和 notion-client 对象
+        resp = dict(response) if not isinstance(response, dict) else response
+        for page in resp.get("results", []):
             results.append(_parse_page(page))
-        has_more = response.get("has_more", False)
-        start_cursor = response.get("next_cursor")
+        has_more = resp.get("has_more", False)
+        start_cursor = resp.get("next_cursor")
     return results
 
 
 def _parse_page(page: dict) -> dict:
     """将 Notion 页面解析为简化 dict。"""
-    p = page["properties"]
+    p = page["properties"] if isinstance(page, dict) else dict(page).get("properties", {})
     return {
-        "page_id": page["id"],
+        "page_id": page["id"] if isinstance(page, dict) else str(page.get("id", "")),
         "ticker": _extract_title(p.get("Ticker", {})),
         "direction": _extract_select(p.get("Direction", {})),
-        "entry_price": p.get("Entry Price", {}).get("number"),
+        "entry_price": p.get("Entry Price", {}).get("number") or 0,
         "position_pct": (p.get("Position %", {}).get("number") or 0) * 100,
-        "profit_target": p.get("Profit Target", {}).get("number"),
-        "risk_reward": p.get("Risk Reward", {}).get("number"),
-        "win_rate": p.get("Win Rate", {}).get("number"),
-        "price_stop": p.get("Price Stop", {}).get("number"),
+        "profit_target": p.get("Profit Target", {}).get("number") or 0,
+        "risk_reward": p.get("Risk Reward", {}).get("number") or 0,
+        "win_rate": p.get("Win Rate", {}).get("number") or 0,
+        "price_stop": p.get("Price Stop", {}).get("number") or 0,
         "time_stop": _extract_date(p.get("Time Stop", {})),
         "logic_stop": _extract_rich_text(p.get("Logic Stop", {})),
         "entry_emotion": _extract_select(p.get("Entry Emotion", {})),
@@ -266,7 +268,7 @@ def _parse_page(page: dict) -> dict:
         "r_multiple": p.get("R Multiple", {}).get("number"),
         "deviation_pct": p.get("Deviation %", {}).get("number"),
         "psych_notes": _extract_rich_text(p.get("Psych Notes", {})),
-        "created": page.get("created_time", ""),
+        "created": page.get("created_time", "") if isinstance(page, dict) else "",
     }
 
 

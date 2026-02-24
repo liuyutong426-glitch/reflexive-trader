@@ -216,11 +216,15 @@ elif page == "📋 管理持仓":
 
     STATUS_FILTER = st.selectbox("筛选状态", ["ALL", "PLANNED", "ACTIVE", "CLOSED"], index=0)
 
-    with st.spinner("正在从 Notion 拉取交易记录..."):
-        if STATUS_FILTER == "ALL":
-            trades = fetch_all_trades()
-        else:
-            trades = fetch_all_trades(status=STATUS_FILTER)
+    try:
+        with st.spinner("正在从 Notion 拉取交易记录..."):
+            if STATUS_FILTER == "ALL":
+                trades = fetch_all_trades()
+            else:
+                trades = fetch_all_trades(status=STATUS_FILTER)
+    except Exception as e:
+        st.error(f"Notion 连接失败，请稍后重试: {e}")
+        trades = []
 
     if not trades:
         st.info("暂无交易记录")
