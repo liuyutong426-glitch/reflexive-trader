@@ -1,3 +1,24 @@
+import streamlit as st
+import streamlit as st
+import os
+
+# --- 1. 设置页面图标 ---
+# 确保后缀是 .png
+LOGO_FILENAME = "Gemini_Generated_Image_ogzugqogzugqogzu.png" 
+
+logo_path = os.path.join(os.path.dirname(__file__), LOGO_FILENAME)
+
+if os.path.exists(logo_path):
+    st.set_page_config(
+        page_title="交易系统",
+        page_icon=logo_path,
+        layout="wide"
+    )
+    st.logo(logo_path)
+else:
+    # 如果路径不对，这里会显示 Emoji
+    st.set_page_config(page_title="交易系统", page_icon="📈")
+
 """ReflexiveTrader Pro — Streamlit 多页面应用"""
 
 import sys
