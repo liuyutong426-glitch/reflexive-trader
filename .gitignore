@@ -1,0 +1,11 @@
+venv/
+__pycache__/
+*.pyc
+.DS_Store
+config.yaml
+.streamlit/secrets.toml
+reports/
+*.html
+ReflexiveTrader.app/
+启动决策表单.command
+.claude/
