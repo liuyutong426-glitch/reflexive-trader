@@ -42,6 +42,19 @@ from utils import kelly_criterion
 
 # ── 自定义样式 ───────────────────────────────────────────────────
 
+# PWA 配置 - 让手机可以添加到桌面
+# 注意：manifest.json 和 icon 文件需要在项目根目录
+st.markdown("""
+<link rel="manifest" href="./manifest.json">
+<meta name="theme-color" content="#00bcd4">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ReflexiveTrader">
+<link rel="apple-touch-icon" href="./icon-192.png">
+<link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="./icon-512.png">
+""", unsafe_allow_html=True)
+
 st.markdown("""
 <style>
     .stApp { background-color: #0e1117; }
