@@ -1,12 +1,32 @@
 """ReflexiveTrader Pro — Streamlit 多页面应用"""
 
 import sys
+import os
 import calendar
 import tempfile
 from datetime import date, timedelta
 from pathlib import Path
 
 import streamlit as st
+
+# ── 页面配置（必须在最前面，只能调用一次）──────────────────────
+
+LOGO_FILENAME = "Gemini_Generated_Image_ogzugqogzugqogzu.png"
+logo_path = os.path.join(os.path.dirname(__file__), LOGO_FILENAME)
+
+if os.path.exists(logo_path):
+    st.set_page_config(
+        page_title="ReflexiveTrader Pro",
+        page_icon=logo_path,
+        layout="wide",
+    )
+    st.logo(logo_path)
+else:
+    st.set_page_config(
+        page_title="ReflexiveTrader Pro",
+        page_icon="📊",
+        layout="wide",
+    )
 
 sys.path.insert(0, str(Path(__file__).parent))
 
@@ -19,14 +39,6 @@ from models import (
     TradePlan,
 )
 from utils import kelly_criterion
-
-# ── 页面配置 ─────────────────────────────────────────────────────
-
-st.set_page_config(
-    page_title="ReflexiveTrader Pro",
-    page_icon="📊",
-    layout="wide",
-)
 
 # ── 自定义样式 ───────────────────────────────────────────────────
 
