@@ -2,6 +2,7 @@
 
 import sys
 import calendar
+import tempfile
 from datetime import date, timedelta
 from pathlib import Path
 
@@ -461,7 +462,12 @@ elif page == "📊 月度复盘":
             # ── 生成 HTML 并嵌入 ──
             from config import load_config
             cfg = load_config()
-            output_dir = cfg.get("reports", {}).get("output_dir", "./reports")
+            output_dir = cfg.get("reports", {}).get("output_dir", tempfile.gettempdir())
+            # 确保目录存在
+            try:
+                Path(output_dir).mkdir(parents=True, exist_ok=True)
+            except OSError:
+                output_dir = tempfile.gettempdir()
             output_path = f"{output_dir}/{period}_review.html"
             render_html_report(review_data, output_path)
 

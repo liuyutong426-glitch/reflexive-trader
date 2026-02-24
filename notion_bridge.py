@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from notion_client import Client
 
-from config import get_notion_api_key, load_config, save_config
+from config import get_notion_api_key, load_config, save_config, _IS_CLOUD
 from models import TradePlan
 from utils import calc_r_multiple, console
 
@@ -99,8 +99,10 @@ def ensure_database(cfg: dict | None = None) -> tuple[Client, str]:
     )
     db_id = response["id"]
     cfg["notion"]["database_id"] = db_id
-    save_config(cfg)
+    save_config(cfg)  # 云端时自动跳过
     console.print(f"[profit]Notion 数据库已创建: {db_id}[/profit]")
+    if _IS_CLOUD:
+        console.print("[warn]请将 database_id 添加到 Streamlit Cloud Secrets 中[/warn]")
     return client, db_id
 
 

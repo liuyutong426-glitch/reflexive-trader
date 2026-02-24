@@ -1,29 +1,33 @@
 """ReflexiveTrader Pro — 配置管理"""
 
 import os
+import tempfile
 from pathlib import Path
 
 import yaml
 
 CONFIG_PATH = Path(__file__).parent / "config.yaml"
 
+# 云端环境检测
+_IS_CLOUD = not CONFIG_PATH.exists()
+
 
 def load_config() -> dict:
     # 优先从 Streamlit Secrets 读取 (云端部署)
     try:
         import streamlit as st
-        if hasattr(st, "secrets") and "notion" in st.secrets:
-            notion_secrets = st.secrets["notion"]
+        if hasattr(st, "secrets") and len(st.secrets) > 0:
+            notion_secrets = dict(st.secrets.get("notion", {}))
             return {
                 "notion": {
-                    "api_key": str(notion_secrets["api_key"]).strip(),
+                    "api_key": str(notion_secrets.get("api_key", "")).strip(),
                     "database_id": str(notion_secrets.get("database_id", "")).strip(),
                     "parent_page_id": str(notion_secrets.get("parent_page_id", "")).strip(),
                 },
                 "account": dict(st.secrets.get("account", {
                     "equity": 100000, "max_risk_per_trade": 0.02, "max_total_heat": 0.06
                 })),
-                "reports": dict(st.secrets.get("reports", {"output_dir": "./reports"})),
+                "reports": dict(st.secrets.get("reports", {"output_dir": tempfile.gettempdir()})),
             }
     except Exception:
         pass
@@ -36,6 +40,8 @@ def load_config() -> dict:
 
 
 def save_config(cfg: dict) -> None:
+    if _IS_CLOUD:
+        return  # 云端只读，跳过写入
     with open(CONFIG_PATH, "w", encoding="utf-8") as f:
         yaml.dump(cfg, f, default_flow_style=False, allow_unicode=True)
 
