@@ -42,18 +42,22 @@ from utils import kelly_criterion
 
 # ── 自定义样式 ───────────────────────────────────────────────────
 
-# PWA 配置 - 让手机可以添加到桌面
-# 注意：manifest.json 和 icon 文件需要在项目根目录
-st.markdown("""
-<link rel="manifest" href="./manifest.json">
-<meta name="theme-color" content="#00bcd4">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="ReflexiveTrader">
-<link rel="apple-touch-icon" href="./icon-192.png">
-<link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png">
-<link rel="icon" type="image/png" sizes="512x512" href="./icon-512.png">
-""", unsafe_allow_html=True)
+# PWA 配置 - 让手机可以添加到桌面（使用 base64 嵌入图标）
+try:
+    from generate_pwa_html import PWA_HTML
+    st.markdown(PWA_HTML, unsafe_allow_html=True)
+except Exception:
+    # Fallback: 使用相对路径（可能在某些环境不工作）
+    st.markdown("""
+    <link rel="manifest" href="./manifest.json">
+    <meta name="theme-color" content="#00bcd4">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="ReflexiveTrader">
+    <link rel="apple-touch-icon" href="./apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png">
+    <link rel="shortcut icon" href="./favicon.ico">
+    """, unsafe_allow_html=True)
 
 st.markdown("""
 <style>
