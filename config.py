@@ -13,8 +13,13 @@ def load_config() -> dict:
     try:
         import streamlit as st
         if hasattr(st, "secrets") and "notion" in st.secrets:
+            notion_secrets = st.secrets["notion"]
             return {
-                "notion": dict(st.secrets["notion"]),
+                "notion": {
+                    "api_key": str(notion_secrets["api_key"]).strip(),
+                    "database_id": str(notion_secrets.get("database_id", "")).strip(),
+                    "parent_page_id": str(notion_secrets.get("parent_page_id", "")).strip(),
+                },
                 "account": dict(st.secrets.get("account", {
                     "equity": 100000, "max_risk_per_trade": 0.02, "max_total_heat": 0.06
                 })),
